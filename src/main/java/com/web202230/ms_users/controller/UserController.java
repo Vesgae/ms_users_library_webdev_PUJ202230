@@ -32,25 +32,28 @@ public class UserController {
         List<User> users = getAllUsers();
         for(User user: users){
             if(user.getEmail().equals(email))
-                return (long) users.indexOf(user);
+                return user.getId();
         }
         return (long) -1;
 
     }
 
     @GetMapping("/users")
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<List<User>> getUsers() {
         List<User> users = getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("users/{email}")
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<User> getUser(@PathVariable String email) {
         User currentUser = getUserByMail(email);
         return new ResponseEntity<User>(currentUser, HttpStatus.OK);
     }
 
     @DeleteMapping("/users")
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<?> deleteUser(@RequestParam String email) {
         Long id = getUserId(email);
         if (!userService.existsByIdUser(id))
@@ -59,12 +62,14 @@ public class UserController {
         return new ResponseEntity(new Mensaje("Usuario eliminado"), HttpStatus.OK);
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/users/{email}")
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity updateUser(@PathVariable String email, @RequestBody User user) {
         Long id = getUserId(email);
         User currentUser = userService.getUser(id).get();
         currentUser.setName(user.getName());
         currentUser.setBirthday(user.getBirthday());
+        currentUser.setEmail(user.getEmail());
         userService.saveUser(currentUser);
         return new ResponseEntity(new Mensaje("Usuario Actualizado"), HttpStatus.OK);
     }
